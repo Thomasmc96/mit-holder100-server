@@ -1,0 +1,4 @@
+wordpress/*
+!wordpress/backups/
+
+config.php

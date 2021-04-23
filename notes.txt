@@ -1,0 +1,62 @@
+I functions.php i theme:
+
+class UserFields {
+
+	function __construct() {
+	 add_filter('rest_user_query',           [$this, 'show_all_users']);
+	}
+   
+   function show_all_users($prepared_args) {
+	   unset($prepared_args['has_published_posts']);
+   
+	   return $prepared_args;
+	 }
+   }
+   
+   new UserFields();
+
+   // Enable the option show in rest
+add_filter( 'acf/rest_api/field_settings/show_in_rest', '__return_true' );
+
+// Enable the option edit in rest
+add_filter( 'acf/rest_api/field_settings/edit_in_rest', '__return_true' );
+
+register_rest_field(
+	'user',
+	'user_email',
+	array(
+		'get_callback'    => function ($user) {
+			return get_userdata($user['id'])->user_email;
+		},
+		'update_callback' => null,
+		'schema'          => null,
+	)
+);
+register_rest_field(
+	'user',
+	'user_login',
+	array(
+		'get_callback'    => function ($user) {
+			return get_userdata($user['id'])->user_login;
+		},
+		'update_callback' => null,
+		'schema'          => null,
+	)
+);
+
+// Sets maximum of users retrieved from api
+add_filter('rest_endpoints', function ($endpoints) {
+	if (!isset($endpoints['/wp/v2/users'])) {
+		return $endpoints;
+	}
+	$endpoints['/wp/v2/users'][0]['args']['per_page']['maximum'] = 1000;
+	return $endpoints;
+});
+
+add_filter( 'send_password_change_email', '__return_false' );
+
+
+I wordpress\wp-content\plugins\jwt-authentication-for-wp-rest-api\public\class-jwt-auth-public.php:
+'user_id' => $user->data->ID,
+
+
