@@ -24,7 +24,7 @@ foreach ($clientsWithEmail as $client) {
         $username = preg_replace('/[^A-Za-z0-9]/', '', $username);
 
         $user['username'] = $username;
-
+        $acf['fields']['user_fields_click_up_id'] = $client->id;
         foreach ($client->custom_fields as $custom_field) {
             if ($custom_field->name == "Email") {
                 $user['email'] = $custom_field->value;
@@ -34,6 +34,14 @@ foreach ($clientsWithEmail as $client) {
                 $phone = str_replace(' ', '', $phone);
                 $phone = str_replace('+45', '', $phone);
                 $acf['fields']['user_fields_phone'] = $phone;
+            }
+            if($custom_field->name == 'Virksomhed' && !empty($custom_field->value)){
+                $companies = $custom_field->value;
+                $companiesString ="";
+                foreach($companies as $company){
+                    $companiesString .= $company->id . " ";
+                }
+                $acf['fields']['user_fields_companies'] = $companiesString;
             }
         };
         // echo json_encode($user);
