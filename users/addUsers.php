@@ -5,6 +5,23 @@ include_once '../config.php';
 
 $token = getToken();
 
+// Get phonenumbers in db
+$ch = curl_init(HOSTNAME . '/wordpress/wp-json/wp/v2/users?per_page=1000');
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+// Headers
+curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+
+// Execution
+$response = curl_exec($ch);
+
+$phonenumbers = [];
+foreach (json_decode($response) as $user) {
+    if (!empty($user->acf->user_fields_phone)) {
+        array_push($phonenumbers, $user->acf->user_fields_phone);
+    }
+}
+
 foreach ($clientsWithEmail as $client) {
     try {
         $user = [];
@@ -35,10 +52,10 @@ foreach ($clientsWithEmail as $client) {
                 $phone = str_replace('+45', '', $phone);
                 $acf['fields']['user_fields_phone'] = $phone;
             }
-            if($custom_field->name == 'Virksomhed' && !empty($custom_field->value)){
+            if ($custom_field->name == 'Virksomhed' && !empty($custom_field->value)) {
                 $companies = $custom_field->value;
-                $companiesString ="";
-                foreach($companies as $company){
+                $companiesString = "";
+                foreach ($companies as $company) {
                     $companiesString .= $company->id . " ";
                 }
                 $acf['fields']['user_fields_companies'] = $companiesString;
@@ -47,34 +64,36 @@ foreach ($clientsWithEmail as $client) {
         // echo json_encode($user);
 
         // New user
-        $ch = curl_init(HOSTNAME . '/wordpress/wp-json/wp/v2/users');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        if (empty($acf['fields']['user_fields_phone']) || (!empty($acf['fields']['user_fields_phone']) && !in_array($acf['fields']['user_fields_phone'], $phonenumbers))) {
 
-        // Data
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($user));
+            $ch = curl_init(HOSTNAME . '/wordpress/wp-json/wp/v2/users');
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-        // Headers
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type:application/json", "Authorization: Bearer $token"));
+            // Data
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($user));
 
-        // Execution
-        $response = curl_exec($ch);
-
-        if (!empty(json_decode($response)->id)) {
-            $newUserId = json_decode($response)->id;
-
-            // ACF
-            $ch = curl_init(HOSTNAME . "/wordpress/wp-json/acf/v3/users/$newUserId");
             // Headers
             curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type:application/json", "Authorization: Bearer $token"));
 
-            // Data
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($acf));
-
             // Execution
             $response = curl_exec($ch);
+            if (!empty(json_decode($response)->id)) {
+                $newUserId = json_decode($response)->id;
+
+                // ACF
+                $ch = curl_init(HOSTNAME . "/wordpress/wp-json/acf/v3/users/$newUserId");
+                // Headers
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type:application/json", "Authorization: Bearer $token"));
+
+                // Data
+                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($acf));
+
+                // Execution
+                $response = curl_exec($ch);
+            }
+            // Closing connection
+            curl_close($ch);
         }
-        // Closing connection
-        curl_close($ch);
     } catch (Exception $e) {
         return $e->getMessage();
     }

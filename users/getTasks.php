@@ -16,8 +16,15 @@ function fetchTasksFromClickUp()
 {
     global $page, $filteredTasks;
 
-    $clickUpClientId = "hh3tjc";
-    $clickUpCompanies = "hn9v97";
+    $clickUpClientId = "";
+    $clickUpCompanies = "";
+
+    if (isset($_GET['clickUpClientId']) && !empty($_GET['clickUpClientId'])) {
+        $clickUpClientId = $_GET['clickUpClientId'];
+    }
+    if (isset($_GET['clickUpCompanies']) && !empty($_GET['clickUpCompanies'])) {
+        $clickUpCompanies = $_GET['clickUpCompanies'];
+    }
 
     $companyArray = explode(" ", $clickUpCompanies);
 
@@ -36,70 +43,69 @@ function fetchTasksFromClickUp()
     // Closing connection
     curl_close($ch);
 
-     // Filtering on result
-//      foreach (json_decode($response)->tasks as $task) {
-//          if($task->status->status ="afventer data fra kunden"){
-//              foreach ($task->custom_fields as $custom_field) {
-//                  // Kunde kontakt
-//                  if ($custom_field->name == "Kunde kontakt") {
-//                      if(empty($custom_field->value)){
-//                         // Kunde (firma)
-//                         if($custom_field->name == "Kunde" && !empty($custom_field->value)){
+    // Filtering on result
+    //      foreach (json_decode($response)->tasks as $task) {
+    //          if($task->status->status ="afventer data fra kunden"){
+    //              foreach ($task->custom_fields as $custom_field) {
+    //                  // Kunde kontakt
+    //                  if ($custom_field->name == "Kunde kontakt") {
+    //                      if(empty($custom_field->value)){
+    //                         // Kunde (firma)
+    //                         if($custom_field->name == "Kunde" && !empty($custom_field->value)){
 
-//                             foreach($custom_field->value as $companyId){
-//                                 if(in_array($companyId, $companyArray)){
-                                    
-//                                     array_push($filteredTasks, $task);
-//                                 }
-//                             }
-//                         }
-//                      }
-//                     else if(!empty($custom_field->value)){
-//                         foreach ($custom_field->value as $clientId){
-//                             if($clickUpClientId == $clientId->id){
-//                                 array_push($filteredTasks, $task);
-//                             }
-//                         }
-//                     }
-//                  }
-                 
-//          }
-//     }
-// }
-     foreach (json_decode($response)->tasks as $task) {
+    //                             foreach($custom_field->value as $companyId){
+    //                                 if(in_array($companyId, $companyArray)){
+
+    //                                     array_push($filteredTasks, $task);
+    //                                 }
+    //                             }
+    //                         }
+    //                      }
+    //                     else if(!empty($custom_field->value)){
+    //                         foreach ($custom_field->value as $clientId){
+    //                             if($clickUpClientId == $clientId->id){
+    //                                 array_push($filteredTasks, $task);
+    //                             }
+    //                         }
+    //                     }
+    //                  }
+
+    //          }
+    //     }
+    // }
+    foreach (json_decode($response)->tasks as $task) {
 
         $companyMatch = false;
         $idMatch = false;
         $assignedAnother = false;
 
-         if($task->status->status == "afventer data fra kunden"){
-             foreach ($task->custom_fields as $custom_field) {
-                 // Kunde kontakt
+        if ($task->status->status == "afventer data fra kunden") {
+            foreach ($task->custom_fields as $custom_field) {
+                // Kunde kontakt
                 if ($custom_field->name == "Kunde kontakt" && !empty($custom_field->value)) {
-                        foreach ($custom_field->value as $clientId){
-                            if($clickUpClientId == $clientId->id && !in_array($task, $filteredTasks)){
-                                // array_push($filteredTasks, $task);
-                                $idMatch = true;
-                            } else {
-                                $assignedAnother = true;
-                            }
+                    foreach ($custom_field->value as $clientId) {
+                        if ($clickUpClientId == $clientId->id && !in_array($task, $filteredTasks)) {
+                            // array_push($filteredTasks, $task);
+                            $idMatch = true;
+                        } else {
+                            $assignedAnother = true;
                         }
-                 } 
-                 // Kunde (firma)
-                else if($custom_field->name == "Kunde" && !empty($custom_field->value)){
-                    foreach($custom_field->value as $companyId){
-                        if(in_array($companyId->id, $companyArray) && !in_array($task, $filteredTasks)){
+                    }
+                }
+                // Kunde (firma)
+                else if ($custom_field->name == "Kunde" && !empty($custom_field->value)) {
+                    foreach ($custom_field->value as $companyId) {
+                        if (in_array($companyId->id, $companyArray) && !in_array($task, $filteredTasks)) {
                             // array_push($filteredTasks, $task);
                             $companyMatch = true;
                         }
-                    }       
+                    }
                 }
             }
         }
 
-        if($idMatch === true || ($companyMatch === true && $assignedAnother === false)) {
+        if ($idMatch === true || ($companyMatch === true && $assignedAnother === false)) {
             array_push($filteredTasks, $task);
-       
         }
     }
     $page++;

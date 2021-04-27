@@ -68,7 +68,7 @@ if (!empty($userEmail)) {
     $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
     $headers .= "Organization: Holder 100 ApS" . "\r\n";
     $headers .= "X-Priority: 3" . "\r\n";
-    $headers .= 'From: Holder 100 <mit@holder100.dk>' . "\r\n";
+    $headers .= 'From: DIN HOLDER 100 ROBoT <mit@holder100.dk>' . "\r\n";
 
     mail($to, $subject, $message, $headers);
 
