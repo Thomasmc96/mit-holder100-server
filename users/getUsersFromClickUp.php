@@ -3,6 +3,7 @@
 // space_holder100: 6610314
 // folder_kundeoverblik: 17358509
 // list_kundekontakter: 38186322
+include_once '../config.php';
 
 $page = 0;
 $clientsWithEmail = [];
@@ -17,7 +18,7 @@ function fetchUserFromClickUp()
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
     // Headers
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json', 'Authorization:6736916_f6214088e72af5c764e8c970b5aa7063c7dcf32f'));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json', 'Authorization:' . CLICKUPTOKEN));
 
     // Execution
     $response = curl_exec($ch);

@@ -1,6 +1,6 @@
 <?php
 include_once '../cors.php';
-include_once 'getToken.php';
+include_once '../getToken.php';
 include_once '../config.php';
 
 $phone = "";

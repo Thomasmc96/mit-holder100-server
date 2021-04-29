@@ -1,5 +1,5 @@
 <?php
-include_once 'getToken.php';
+include_once '../getToken.php';
 include_once 'getUsersFromClickUp.php';
 include_once '../config.php';
 

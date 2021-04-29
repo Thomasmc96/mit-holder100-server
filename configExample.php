@@ -2,5 +2,5 @@
 define('USERNAME', '');
 define('PASSWORD', '');
 
-// define('HOSTNAME', '');
+define('CLICKUPTOKEN', '');
 define('HOSTNAME', '');
