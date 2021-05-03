@@ -8,7 +8,7 @@ if(isset($_POST['taskId']) && !empty($_POST['taskId'])){
     $taskId = $_POST['taskId'];
     $comment['comment_text'] = $_POST['comment_text'];
     $comment['assignee'] = $_POST['assignee'];
-    $comment['notify_all'] = true;
+    // $comment['notify_all'] = true;
 }
 
  // URL
