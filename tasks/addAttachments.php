@@ -36,8 +36,37 @@ if(isset($_POST['taskId']) && !empty($_POST['taskId'])){
             
             // Closing connection
             curl_close($curl);
+            // echo $response;
+            $response = json_decode($response, true);
+            var_dump($response['title']);
+            
+            if(!empty($response['title'])){
+                $title = $response['title'];
 
-            echo $response;
+                $comment = [];
+
+                $comment['comment_text'] = "En ny fil med titlen \"$title\" er blevet tilføjet.";
+                $comment['assignee'] = $_POST['assignee'];
+                    // $comment['notify_all'] = true;
+
+                // URL
+                $ch = curl_init("https://api.clickup.com/api/v2/task/$taskId/comment");
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+                // Data
+                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($comment));
+
+                // Headers
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json', 'Authorization:' . CLICKUPTOKEN));
+
+                // Execution
+                $response = curl_exec($ch);
+
+                echo $response;
+
+                // Closing connection
+                curl_close($ch);
+            }
         }
     }
 }
