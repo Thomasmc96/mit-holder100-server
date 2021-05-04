@@ -45,8 +45,8 @@ if (isset($_POST['taskId']) && !empty($_POST['taskId'])) {
                 $title = $response['title'];
 
                 $comment = [];
-                if (empty($fileComment)) {
-                    $comment['comment_text'] = "En ny fil med titlen \"$title\" er blevet tilføjet.";
+                if (empty($fileComment) || $fileComment == "undefined") {
+                    $comment['comment_text'] = "En ny fil med titlen \"$title\" er blevet tilføjet uden kommentar tilknyttet.";
                 } else {
                     $comment['comment_text'] = "En ny fil med titlen \"$title\" er blevet tilføjet. En kommentar er tilknyttet fra kunden og lyder som følger:\n\n\"$fileComment\"";
                 }
