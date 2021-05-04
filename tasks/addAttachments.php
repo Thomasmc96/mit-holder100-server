@@ -4,15 +4,16 @@ include_once '../config.php';
 
 $taskId = "";
 $files = [];
-if(isset($_POST['taskId']) && !empty($_POST['taskId'])){
+if (isset($_POST['taskId']) && !empty($_POST['taskId'])) {
     $taskId = $_POST['taskId'];
-    for ($i=0; $i < count($_FILES['file']['name']); $i++) { 
+    for ($i = 0; $i < count($_FILES['file']['name']); $i++) {
         $attachment = [];
         $attachment['filename'] = $_FILES['file']['name'][$i];
         $attachment['attachment'] = new CURLFILE($_FILES['file']['tmp_name'][$i]);
+        $fileComment = $_POST['comment'][$i];
 
         // echo $_FILES['file']['name'][$i];
-        if(!empty($attachment)){
+        if (!empty($attachment)) {
 
             $curl = curl_init();
 
@@ -27,27 +28,30 @@ if(isset($_POST['taskId']) && !empty($_POST['taskId'])){
                 CURLOPT_CUSTOMREQUEST => 'POST',
                 CURLOPT_POSTFIELDS => $attachment,
                 CURLOPT_HTTPHEADER => array(
-                'Authorization: '.CLICKUPTOKEN.'',
-                'Content-Type: multipart/form-data'
+                    'Authorization: ' . CLICKUPTOKEN . '',
+                    'Content-Type: multipart/form-data'
                 ),
             ));
-            
+
             $response = curl_exec($curl);
-            
+
             // Closing connection
             curl_close($curl);
             // echo $response;
             $response = json_decode($response, true);
             var_dump($response['title']);
-            
-            if(!empty($response['title'])){
+
+            if (!empty($response['title'])) {
                 $title = $response['title'];
 
                 $comment = [];
-
-                $comment['comment_text'] = "En ny fil med titlen \"$title\" er blevet tilføjet.";
+                if (empty($fileComment)) {
+                    $comment['comment_text'] = "En ny fil med titlen \"$title\" er blevet tilføjet.";
+                } else {
+                    $comment['comment_text'] = "En ny fil med titlen \"$title\" er blevet tilføjet. En kommentar er tilknyttet fra kunden og lyder som følger:\n\n\"$fileComment\"";
+                }
                 $comment['assignee'] = $_POST['assignee'];
-                    // $comment['notify_all'] = true;
+                // $comment['notify_all'] = true;
 
                 // URL
                 $ch = curl_init("https://api.clickup.com/api/v2/task/$taskId/comment");
@@ -70,4 +74,3 @@ if(isset($_POST['taskId']) && !empty($_POST['taskId'])){
         }
     }
 }
-   
