@@ -33,18 +33,18 @@ function fetchTasksFromClickUp()
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
     // Headers
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json', 'Authorization:' . CLICKUPTOKEN));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'Content-Type:application/json',
+        'Authorization:' . CLICKUPTOKEN
+    ));
 
     // Execution
     $response = curl_exec($ch);
-
-    // echo $response;
 
     // Closing connection
     curl_close($ch);
 
     foreach (json_decode($response)->tasks as $task) {
-
         $companyMatch = false;
         $idMatch = false;
         $assignedAnother = false;
@@ -55,18 +55,16 @@ function fetchTasksFromClickUp()
                 if ($custom_field->name == "Kunde kontakt" && !empty($custom_field->value)) {
                     foreach ($custom_field->value as $clientId) {
                         if ($clickUpClientId == $clientId->id && !in_array($task, $filteredTasks)) {
-                            // array_push($filteredTasks, $task);
                             $idMatch = true;
                         } else {
                             $assignedAnother = true;
                         }
                     }
                 }
-                // Kunde (firma)
+                // Kunde
                 else if ($custom_field->name == "Kunde" && !empty($custom_field->value)) {
                     foreach ($custom_field->value as $companyId) {
                         if (in_array($companyId->id, $companyArray) && !in_array($task, $filteredTasks)) {
-                            // array_push($filteredTasks, $task);
                             $companyMatch = true;
                         }
                     }
