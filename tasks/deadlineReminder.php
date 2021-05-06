@@ -27,7 +27,7 @@ function fetchTasksFromClickUp()
         if (isset($task->due_date) && !empty($task->due_date)) {
             $deadline = $task->due_date / 1000;
             $currentTime = time();
-            if ($deadline < $currentTime) {
+            if ($deadline < $currentTime && $task->status->status == "afventer data fra kunden") {
                 $taskName = $task->name;
                 $custom_fields = $task->custom_fields;
 
