@@ -43,36 +43,6 @@ function fetchTasksFromClickUp()
     // Closing connection
     curl_close($ch);
 
-    // Filtering on result
-    //      foreach (json_decode($response)->tasks as $task) {
-    //          if($task->status->status ="afventer data fra kunden"){
-    //              foreach ($task->custom_fields as $custom_field) {
-    //                  // Kunde kontakt
-    //                  if ($custom_field->name == "Kunde kontakt") {
-    //                      if(empty($custom_field->value)){
-    //                         // Kunde (firma)
-    //                         if($custom_field->name == "Kunde" && !empty($custom_field->value)){
-
-    //                             foreach($custom_field->value as $companyId){
-    //                                 if(in_array($companyId, $companyArray)){
-
-    //                                     array_push($filteredTasks, $task);
-    //                                 }
-    //                             }
-    //                         }
-    //                      }
-    //                     else if(!empty($custom_field->value)){
-    //                         foreach ($custom_field->value as $clientId){
-    //                             if($clickUpClientId == $clientId->id){
-    //                                 array_push($filteredTasks, $task);
-    //                             }
-    //                         }
-    //                     }
-    //                  }
-
-    //          }
-    //     }
-    // }
     foreach (json_decode($response)->tasks as $task) {
 
         $companyMatch = false;

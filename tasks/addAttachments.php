@@ -51,7 +51,7 @@ if (isset($_POST['taskId']) && !empty($_POST['taskId'])) {
                     $comment['comment_text'] = "En ny fil med titlen \"$title\" er blevet tilføjet. En kommentar er tilknyttet fra kunden og lyder som følger:\n\n\"$fileComment\"";
                 }
                 $comment['assignee'] = $_POST['assignee'];
-                // $comment['notify_all'] = true;
+                $comment['notify_all'] = true;
 
                 // URL
                 $ch = curl_init("https://api.clickup.com/api/v2/task/$taskId/comment");
