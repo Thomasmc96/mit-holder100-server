@@ -11,7 +11,8 @@ if (isset($_POST['taskId']) && !empty($_POST['taskId'])) {
         $attachment['filename'] = $_FILES['file']['name'][$i];
         $attachment['attachment'] = new CURLFILE($_FILES['file']['tmp_name'][$i]);
         $fileComment = $_POST['comment'][$i];
-
+        $fileTags = $_POST['tags'][$i];
+        echo $fileTags;
         // echo $_FILES['file']['name'][$i];
         if (!empty($attachment)) {
 
@@ -46,9 +47,19 @@ if (isset($_POST['taskId']) && !empty($_POST['taskId'])) {
 
                 $comment = [];
                 if (empty($fileComment) || $fileComment == "undefined") {
-                    $comment['comment_text'] = "En ny fil med titlen \"$title\" er blevet tilføjet uden kommentar tilknyttet.";
+                    if(empty($fileTags) || $fileTags == "undefined"){
+                        $comment['comment_text'] = "En ny fil med titlen \"$title\" er blevet tilføjet uden kommentar eller tags tilknyttet.";
+                    }else {
+                        $comment['comment_text'] = "En ny fil med titlen \"$title\" er blevet tilføjet uden kommentar tilknyttet, men med følgende tags:\n".trim($fileTags). "";
+                        
+                    }
                 } else {
-                    $comment['comment_text'] = "En ny fil med titlen \"$title\" er blevet tilføjet. En kommentar er tilknyttet fra kunden og lyder som følger:\n\n\"$fileComment\"";
+                    if(empty($fileTags) || $fileTags == "undefined"){
+                        $comment['comment_text'] = "En ny fil med titlen \"$title\" er blevet tilføjet. En kommentar er tilknyttet fra kunden og lyder som følger:\n\n\"$fileComment\"";
+
+                    }else{
+                        $comment['comment_text'] = "En ny fil med titlen \"$title\" er blevet tilføjet. En kommentar er tilknyttet fra kunden og lyder som følger:\n\n\"$fileComment\"\n\nFølgende tags er desuden tilknyttet:\n".trim($fileTags)."";
+                    }
                 }
                 $comment['assignee'] = $_POST['assignee'];
                 // $comment['notify_all'] = true;
