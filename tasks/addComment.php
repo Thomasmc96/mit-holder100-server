@@ -10,7 +10,7 @@ if (isset($_POST['taskId']) && !empty($_POST['taskId'])) {
     $comment['comment_text'] = "En tekst på selve opgaven er blevet tilføjet af kunden og lyder som følger:\n\n\"" . $_POST['comment_text'] . "\"";
     $comment['assignee'] = $_POST['assignee'];
     $status = $_POST['status'];
-    // $comment['notify_all'] = true;
+    $comment['notify_all'] = true;
 }
 
 // URL
@@ -21,7 +21,10 @@ curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($comment));
 
 // Headers
-curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json', 'Authorization:' . CLICKUPTOKEN));
+curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+    'Content-Type:application/json',
+    'Authorization:' . CLICKUPTOKEN
+));
 
 // Execution
 $response = curl_exec($ch);

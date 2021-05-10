@@ -62,7 +62,7 @@ if (isset($_POST['taskId']) && !empty($_POST['taskId'])) {
                     }
                 }
                 $comment['assignee'] = $_POST['assignee'];
-                // $comment['notify_all'] = true;
+                $comment['notify_all'] = true;
 
                 // URL
                 $ch = curl_init("https://api.clickup.com/api/v2/task/$taskId/comment");
