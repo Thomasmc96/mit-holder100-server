@@ -35,9 +35,11 @@ foreach (json_decode($response) as $user) {
 
     if (!empty($phone) && $userPhone == $phone || !empty($email) && $userEmail == $email) {
         $userName = $user->user_login;
+        $companies = $user->acf->user_fields_companies;
         echo json_encode(array(
             'status' => 200,
             'username' => $userName,
+            'companies' => $companies
         ));
     }
 }
