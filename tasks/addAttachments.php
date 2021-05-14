@@ -12,8 +12,8 @@ if (isset($_POST['taskId']) && !empty($_POST['taskId'])) {
         $attachment['attachment'] = new CURLFILE($_FILES['file']['tmp_name'][$i]);
         $fileComment = $_POST['comment'][$i];
         $fileTags = $_POST['tags'][$i];
-        echo $fileTags;
-        // echo $_FILES['file']['name'][$i];
+        $username = $_POST['name'][$i];
+
         if (!empty($attachment)) {
 
             $curl = curl_init();
@@ -48,17 +48,17 @@ if (isset($_POST['taskId']) && !empty($_POST['taskId'])) {
                 $comment = [];
                 if (empty($fileComment) || $fileComment == "undefined") {
                     if(empty($fileTags) || $fileTags == "undefined"){
-                        $comment['comment_text'] = "En ny fil med titlen \"$title\" er blevet tilføjet uden kommentar eller tags tilknyttet.";
+                        $comment['comment_text'] = "$username har tiløjet en ny fil med titlen \"$title\" uden kommentar eller tags tilknyttet.";
                     }else {
-                        $comment['comment_text'] = "En ny fil med titlen \"$title\" er blevet tilføjet uden kommentar tilknyttet, men med følgende tags:\n".trim($fileTags). "";
+                        $comment['comment_text'] = "$username har tiløjet en ny fil med titlen \"$title\" uden kommentar tilknyttet, men med følgende tags:\n".trim($fileTags). "";
                         
                     }
                 } else {
                     if(empty($fileTags) || $fileTags == "undefined"){
-                        $comment['comment_text'] = "En ny fil med titlen \"$title\" er blevet tilføjet. En kommentar er tilknyttet fra kunden og lyder som følger:\n\n\"$fileComment\"";
+                        $comment['comment_text'] = "$username har tiløjet en ny fil med titlen \"$title\". En kommentar er tilknyttet og lyder:\n\n\"$fileComment\"";
 
                     }else{
-                        $comment['comment_text'] = "En ny fil med titlen \"$title\" er blevet tilføjet. En kommentar er tilknyttet fra kunden og lyder som følger:\n\n\"$fileComment\"\n\nFølgende tags er desuden tilknyttet:\n".trim($fileTags)."";
+                        $comment['comment_text'] = "$username har tiløjet en ny fil med titlen \"$title\". En kommentar er tilknyttet og lyder:\n\n\"$fileComment\"\n\nFølgende tags er desuden tilknyttet:\n".trim($fileTags)."";
                     }
                 }
                 $comment['assignee'] = $_POST['assignee'];

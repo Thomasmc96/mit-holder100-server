@@ -7,7 +7,8 @@ $comment = [];
 $status = "";
 if (isset($_POST['taskId']) && !empty($_POST['taskId'])) {
     $taskId = $_POST['taskId'];
-    $comment['comment_text'] = "En tekst på selve opgaven er blevet tilføjet af kunden og lyder som følger:\n\n\"" . $_POST['comment_text'] . "\"";
+    // $comment['comment_text'] = "En tekst på selve opgaven er blevet tilføjet af ".$_POST['name']. " og lyder som følger:\n\n\"" . $_POST['comment_text'] . "\"";
+    $comment['comment_text'] = $_POST['name']. " har tilføjet en tekst:\n\n\"" . $_POST['comment_text'] . "\"";
     $comment['assignee'] = $_POST['assignee'];
     $status = $_POST['status'];
     $comment['notify_all'] = true;
