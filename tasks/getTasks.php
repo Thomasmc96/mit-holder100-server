@@ -48,8 +48,9 @@ function fetchTasksFromClickUp()
         $companyMatch = false;
         $idMatch = false;
         $assignedAnother = false;
+        $status = $task->status->status;
 
-        if ($task->status->status == "afventer data fra kunden") {
+        if ($status == "afventer data fra kunden" || $status == "modtager data fra kunden") {
             foreach ($task->custom_fields as $custom_field) {
                 // Kunde kontakt
                 if ($custom_field->name == "Kunde kontakt" && !empty($custom_field->value)) {

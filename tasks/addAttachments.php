@@ -60,10 +60,10 @@ if (isset($_POST['taskId']) && !empty($_POST['taskId'])) {
                     }
                 } else {
                     if(empty($fileTags) || $fileTags == "undefined"){
-                        $comment['comment_text'] = "$username har tiløjet en ny fil med titlen \"$title\". En kommentar er tilknyttet og lyder:\n\n\"$fileComment\"";
+                        $comment['comment_text'] = "$username har tiløjet en ny fil med titlen \"$title\".\n\nEn kommentar er tilknyttet og lyder:\n\"$fileComment\"";
 
                     }else{
-                        $comment['comment_text'] = "$username har tiløjet en ny fil med titlen \"$title\". En kommentar er tilknyttet og lyder:\n\n\"$fileComment\"\n\nFølgende tags er desuden tilknyttet:\n".trim($fileTags)."";
+                        $comment['comment_text'] = "$username har tiløjet en ny fil med titlen \"$title\".\n\nEn kommentar er tilknyttet og lyder:\n\"$fileComment\"\n\nFølgende tags er desuden tilknyttet:\n".trim($fileTags)."";
                     }
                 }
                 $comment['assignee'] = $_POST['assignee'];
