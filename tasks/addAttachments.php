@@ -1,6 +1,7 @@
 <?php
 include_once '../cors.php';
 include_once '../config.php';
+include_once './changeStatus.php';
 
 $taskId = "";
 $files = [];
@@ -13,6 +14,7 @@ if (isset($_POST['taskId']) && !empty($_POST['taskId'])) {
         $fileComment = $_POST['comment'][$i];
         $fileTags = $_POST['tags'][$i];
         $username = $_POST['name'][$i];
+        $status = $_POST['status'][$i];
 
         if (!empty($attachment)) {
 
@@ -40,7 +42,10 @@ if (isset($_POST['taskId']) && !empty($_POST['taskId'])) {
             curl_close($curl);
             // echo $response;
             $response = json_decode($response, true);
-            var_dump($response['title']);
+
+            if (!empty($response['id']) && $status == 'afventer data fra kunden') {
+                changeStatus($taskId);
+            }
 
             if (!empty($response['title'])) {
                 $title = $response['title'];
@@ -81,6 +86,9 @@ if (isset($_POST['taskId']) && !empty($_POST['taskId'])) {
 
                 // Closing connection
                 curl_close($ch);
+
+                
+               
             }
         }
     }
