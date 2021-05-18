@@ -15,15 +15,22 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
 // Execution
 $response = curl_exec($ch);
 
+// Closing connection
+curl_close($ch);
+
 $phonenumbers = [];
+$userIdAndEmail = [];
+// Pushing every user from db with a phonenumber to $phonenumbers
 foreach (json_decode($response) as $user) {
     if (!empty($user->acf->user_fields_phone)) {
         array_push($phonenumbers, $user->acf->user_fields_phone);
     }
+    array_push($userIdAndEmail, ['ID' => $user->id, 'email' => $user->user_email]);
 }
-
+// print_r($userIdAndEmail);
 foreach ($clientsWithEmail as $client) {
     try {
+        $userId = $client->id;
         $user = [];
         $acf = [];
 
@@ -77,6 +84,11 @@ foreach ($clientsWithEmail as $client) {
 
             // Execution
             $response = curl_exec($ch);
+
+            // Closing connection
+            curl_close($ch);
+
+            // Updating the newly added uses's acf fields with the id from the response
             if (!empty(json_decode($response)->id)) {
                 $newUserId = json_decode($response)->id;
 
@@ -90,7 +102,39 @@ foreach ($clientsWithEmail as $client) {
 
                 // Execution
                 $response = curl_exec($ch);
+
+                // Closing connection
+                curl_close($ch);
             }
+        } else if ($key = array_search($user['email'], array_column($userIdAndEmail, 'email'))) {
+
+            $existingUserId = $userIdAndEmail[$key]['ID'];
+            // unset($user['password']);
+            // unset($user['name']);
+            // unset($user['username']);
+
+            // // User
+            // $ch = curl_init(HOSTNAME . "/wordpress/wp-json/wp/v2/users/$existingUserId");
+            // // Headers
+            // curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type:application/json", "Authorization: Bearer $token"));
+
+            // // Data
+            // curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($user));
+
+            // // Execution
+            // $response = curl_exec($ch);
+
+            // ACF
+            $ch = curl_init(HOSTNAME . "/wordpress/wp-json/acf/v3/users/$existingUserId");
+            // Headers
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type:application/json", "Authorization: Bearer $token"));
+
+            // Data
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($acf));
+
+            // Execution
+            $response = curl_exec($ch);
+
             // Closing connection
             curl_close($ch);
         }
