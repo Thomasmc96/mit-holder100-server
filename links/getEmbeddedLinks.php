@@ -6,16 +6,17 @@ $page = 0;
 $filteredTasks = [];
 $companyId = "";
 
-if(isset($_GET['company']) && !empty($_GET['company'])){
+if (isset($_GET['company']) && !empty($_GET['company'])) {
   $companyId = $_GET['company'];
 }
 
-function getEmbeddedLinks(){
+function getEmbeddedLinks()
+{
 
   global $page, $filteredTasks, $companyId;
 
   $curl = curl_init();
-  
+
   curl_setopt_array($curl, array(
     CURLOPT_URL => "https://api.clickup.com/api/v2/list/59168976/task?archived=false&page=$page",
     CURLOPT_RETURNTRANSFER => true,
@@ -27,14 +28,14 @@ function getEmbeddedLinks(){
     CURLOPT_CUSTOMREQUEST => 'GET',
     CURLOPT_HTTPHEADER => array(
       'Content-Type: application/json',
-      'Authorization: 6736916_f6214088e72af5c764e8c970b5aa7063c7dcf32f'
+      'Authorization: ' . CLICKUPTOKEN . ''
     ),
   ));
-  
+
   $response = curl_exec($curl);
-  
+
   curl_close($curl);
-  
+
   foreach (json_decode($response)->tasks as $task) {
     $typeMatch = false;
     $companyMatch = false;
@@ -45,22 +46,22 @@ function getEmbeddedLinks(){
       //     $typeMatch = true;
       //   }
       // }
-      if($custom_field->name === "Virksomhed"){
-        foreach($custom_field->value as $company){
-          if($company->id === $companyId && !in_array($task, $filteredTasks)){
+      if ($custom_field->name === "Virksomhed") {
+        foreach ($custom_field->value as $company) {
+          if ($company->id === $companyId && !in_array($task, $filteredTasks)) {
             $companyMatch = true;
           }
         }
       }
-    } 
-    if($companyMatch === true){
+    }
+    if ($companyMatch === true) {
       array_push($filteredTasks, $task);
-    } 
+    }
   }
-  
+
   $page++;
   if (!empty(json_decode($response)->tasks)) {
-    getEmbeddedLinks();    
+    getEmbeddedLinks();
   }
 }
 getEmbeddedLinks();
