@@ -76,7 +76,6 @@ if (!empty($userEmail)) {
 
     mail($to, $subject, $message, $headers);
 
-    // Skal ændres senere
     echo json_encode($result = [
         'status' => 200,
         'message' => 'success',

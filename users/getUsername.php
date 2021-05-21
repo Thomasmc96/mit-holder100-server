@@ -25,8 +25,6 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
 // Execution
 $response = curl_exec($ch);
 
-// echo $response;
-
 // Closing connection
 curl_close($ch);
 foreach (json_decode($response) as $user) {

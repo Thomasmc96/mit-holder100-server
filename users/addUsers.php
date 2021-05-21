@@ -33,7 +33,7 @@ foreach (json_decode($response) as $user) {
     }
     array_push($userIdAndEmail, ['ID' => $user->id, 'email' => $user->user_email]);
 }
-// print_r($userIdAndEmail);
+
 foreach ($clientsWithEmail as $client) {
     try {
         $userId = $client->id;
@@ -74,7 +74,6 @@ foreach ($clientsWithEmail as $client) {
                 $acf['fields']['user_fields_companies'] = $companiesString;
             }
         };
-        // echo json_encode($user);
 
         // New user
         if (empty($acf['fields']['user_fields_phone']) || (!empty($acf['fields']['user_fields_phone']) && !in_array($acf['fields']['user_fields_phone'], $phonenumbers))) {
@@ -113,38 +112,6 @@ foreach ($clientsWithEmail as $client) {
                 curl_close($ch);
             }
         }
-        // else if ($key = array_search($user['email'], array_column($userIdAndEmail, 'email'))) {
-
-        //     $existingUserId = $userIdAndEmail[$key]['ID'];
-        //     // unset($user['password']);
-        //     // unset($user['name']);
-        //     // unset($user['username']);
-
-        //     // // User
-        //     // $ch = curl_init(HOSTNAME . "/wordpress/wp-json/wp/v2/users/$existingUserId");
-        //     // // Headers
-        //     // curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type:application/json", "Authorization: Bearer $token"));
-
-        //     // // Data
-        //     // curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($user));
-
-        //     // // Execution
-        //     // $response = curl_exec($ch);
-
-        //     // ACF
-        //     $ch = curl_init(HOSTNAME . "/wordpress/wp-json/acf/v3/users/$existingUserId");
-        //     // Headers
-        //     curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type:application/json", "Authorization: Bearer $token"));
-
-        //     // Data
-        //     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($acf));
-
-        //     // Execution
-        //     $response = curl_exec($ch);
-
-        //     // Closing connection
-        //     curl_close($ch);
-        // }
     } catch (Exception $e) {
         return $e->getMessage();
     }

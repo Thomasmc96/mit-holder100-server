@@ -35,10 +35,12 @@ if (!empty($userResponse['acf']['user_fields_companies'])) {
     $companiesString = trim($userResponse['acf']['user_fields_companies']);
     $companyArray = explode(' ', $companiesString);
     foreach ($companyArray as $companyId) {
+
         $curl = curl_init();
-        // https://api.clickup.com/api/v2/task/9hz
+
         // URL
         $ch = curl_init("https://api.clickup.com/api/v2/task/$companyId");
+
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         // Headers

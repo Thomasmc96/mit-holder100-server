@@ -14,7 +14,6 @@ $writtenComment = "";
 if (isset($_POST['taskId']) && !empty($_POST['taskId'])) {
     $taskId = $_POST['taskId'];
     $writtenComment = $_POST['comment_text'];
-    // $comment['comment_text'] = "En tekst på selve opgaven er blevet tilføjet af ".$_POST['name']. " og lyder som følger:\n\n\"" . $_POST['comment_text'] . "\"";
     $comment['comment_text'] = $_POST['name'] . " har tilføjet en tekst:\n\n\"" . $writtenComment . "\"";
     $comment['assignee'] = $_POST['assignee'];
     $status = $_POST['status'];
@@ -37,8 +36,6 @@ if ($writtenComment !== "") {
 
     // Execution
     $response = curl_exec($ch);
-
-    // echo $response;
 
     // Closing connection
     curl_close($ch);
