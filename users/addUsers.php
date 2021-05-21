@@ -1,4 +1,10 @@
 <?php
+
+/**
+ * The purpose of this file is to add user from Click into WordPress DB.
+ * It is executed by a cron job each 30 minutes.
+ */
+
 include_once '../getToken.php';
 include_once 'getUsersFromClickUp.php';
 include_once '../config.php';

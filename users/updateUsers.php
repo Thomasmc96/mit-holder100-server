@@ -1,6 +1,9 @@
 <?php
 
-/**CURRENTY NOT IN USE */
+/**
+ * The purpose of this file is to update all user in WordPress
+ * CURRENTY NOT IN USE
+ * */
 
 include_once '../getToken.php';
 include_once 'getUsersFromClickUp.php';

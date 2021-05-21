@@ -1,4 +1,8 @@
 <?php
+
+/**
+ * The purpose of this file is to get a admin WordPress token
+ */
 include_once '../config.php';
 include_once '../cors.php';
 

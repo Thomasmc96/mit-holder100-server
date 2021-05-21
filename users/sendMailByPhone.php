@@ -1,4 +1,8 @@
 <?php
+
+/**
+ * The purpose of this file is to send a mail to a user with a pincode by their phonenumber
+ */
 include_once '../cors.php';
 include_once '../getToken.php';
 include_once '../config.php';

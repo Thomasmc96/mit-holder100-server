@@ -1,4 +1,8 @@
 <?php
+
+/**
+ * The purpose of this file is to send mails to "kunde kontakt" on a task if the deadline is overdue
+ */
 include_once '../cors.php';
 include_once '../config.php';
 

@@ -1,4 +1,9 @@
 <?php
+
+/**
+ * The purpose of this file is to get all users from Click Up which has an email
+ */
+
 // team: 1380008
 // space_holder100: 6610314
 // folder_kundeoverblik: 17358509

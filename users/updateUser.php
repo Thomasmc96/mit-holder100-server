@@ -1,4 +1,9 @@
 <?php
+
+/**
+ * The purpose of this file is to update a single user in WordPress
+ * This file is executed by Click Up Automate function when a customers fields is changed
+ */
 include_once '../getToken.php';
 include_once '../config.php';
 

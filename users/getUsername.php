@@ -1,4 +1,8 @@
 <?php
+
+/**
+ * The purpose of this file is to get the username from WordPress db by a phonenumber or email
+ */
 include_once '../cors.php';
 include_once '../config.php';
 

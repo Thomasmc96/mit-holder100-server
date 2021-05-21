@@ -1,4 +1,9 @@
 <?php
+
+/**
+ * The purpose of this file is to add attachments to tasks in Click Up.
+ * This file also adds comments to the task depending of uploaded material from the user
+ */
 include_once '../cors.php';
 include_once '../config.php';
 include_once './changeStatus.php';
@@ -40,9 +45,10 @@ if (isset($_POST['taskId']) && !empty($_POST['taskId'])) {
 
             // Closing connection
             curl_close($curl);
-            // echo $response;
+
             $response = json_decode($response, true);
 
+            // Changing task status in Click Up
             if (!empty($response['id']) && $status == 'afventer data fra kunden') {
                 changeStatus($taskId);
             }
@@ -51,19 +57,19 @@ if (isset($_POST['taskId']) && !empty($_POST['taskId'])) {
                 $title = $response['title'];
 
                 $comment = [];
+
+                // Setting the comment in Click Up depending of clients chose of tags and comments
                 if (empty($fileComment) || $fileComment == "undefined") {
-                    if(empty($fileTags) || $fileTags == "undefined"){
+                    if (empty($fileTags) || $fileTags == "undefined") {
                         $comment['comment_text'] = "$username har tiløjet en ny fil med titlen \"$title\" uden kommentar eller tags tilknyttet.";
-                    }else {
-                        $comment['comment_text'] = "$username har tiløjet en ny fil med titlen \"$title\" uden kommentar tilknyttet, men med følgende tags:\n".trim($fileTags). "";
-                        
+                    } else {
+                        $comment['comment_text'] = "$username har tiløjet en ny fil med titlen \"$title\" uden kommentar tilknyttet, men med følgende tags:\n" . trim($fileTags) . "";
                     }
                 } else {
-                    if(empty($fileTags) || $fileTags == "undefined"){
+                    if (empty($fileTags) || $fileTags == "undefined") {
                         $comment['comment_text'] = "$username har tiløjet en ny fil med titlen \"$title\".\n\nEn kommentar er tilknyttet og lyder:\n\"$fileComment\"";
-
-                    }else{
-                        $comment['comment_text'] = "$username har tiløjet en ny fil med titlen \"$title\".\n\nEn kommentar er tilknyttet og lyder:\n\"$fileComment\"\n\nFølgende tags er desuden tilknyttet:\n".trim($fileTags)."";
+                    } else {
+                        $comment['comment_text'] = "$username har tiløjet en ny fil med titlen \"$title\".\n\nEn kommentar er tilknyttet og lyder:\n\"$fileComment\"\n\nFølgende tags er desuden tilknyttet:\n" . trim($fileTags) . "";
                     }
                 }
                 $comment['assignee'] = $_POST['assignee'];
@@ -86,9 +92,6 @@ if (isset($_POST['taskId']) && !empty($_POST['taskId'])) {
 
                 // Closing connection
                 curl_close($ch);
-
-                
-               
             }
         }
     }

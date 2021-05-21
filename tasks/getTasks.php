@@ -1,4 +1,9 @@
 <?php
+
+/**
+ * The purpose of this file is to get tasks from Click Up and filter by assigned persons and companies
+ */
+
 // team: 1380008
 // space_marketingsaftaler: 8860795
 // folder_demoKunde: 27770443

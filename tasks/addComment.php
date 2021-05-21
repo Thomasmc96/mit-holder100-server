@@ -1,4 +1,8 @@
 <?php
+
+/**
+ * The purpose of this file is to add a single comment to a Click Up task when the user uploads a task-text
+ */
 include_once '../cors.php';
 include_once '../config.php';
 include_once './changeStatus.php';
@@ -11,12 +15,12 @@ if (isset($_POST['taskId']) && !empty($_POST['taskId'])) {
     $taskId = $_POST['taskId'];
     $writtenComment = $_POST['comment_text'];
     // $comment['comment_text'] = "En tekst på selve opgaven er blevet tilføjet af ".$_POST['name']. " og lyder som følger:\n\n\"" . $_POST['comment_text'] . "\"";
-    $comment['comment_text'] = $_POST['name']. " har tilføjet en tekst:\n\n\"" . $writtenComment . "\"";
+    $comment['comment_text'] = $_POST['name'] . " har tilføjet en tekst:\n\n\"" . $writtenComment . "\"";
     $comment['assignee'] = $_POST['assignee'];
     $status = $_POST['status'];
     $comment['notify_all'] = true;
 }
-if($writtenComment !== ""){
+if ($writtenComment !== "") {
 
     // URL
     $ch = curl_init("https://api.clickup.com/api/v2/task/$taskId/comment");
