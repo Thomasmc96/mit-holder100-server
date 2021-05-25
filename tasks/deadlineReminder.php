@@ -6,12 +6,15 @@
 include_once '../cors.php';
 include_once '../config.php';
 
+// The first hardcoded index is required for a php search function to work
+$tasksAndAssociatedUsersWithDeadlineToday = [['taskName' => ['test'], 'username' => 'test', 'userEmail' => 'test']];
+$tasksAndAssociatedUsersWithDeadlineTomorrow = [['taskName' => ['test'], 'username' => 'test', 'userEmail' => 'test']];
 $page = 0;
 set_time_limit(0);
 
 function fetchTasksFromClickUp()
 {
-    global $page;
+    global $page, $tasksAndAssociatedUsersWithDeadlineToday, $tasksAndAssociatedUsersWithDeadlineTomorrow;
 
     // URL
     $ch = curl_init("https://api.clickup.com/api/v2/list/57095312/task?archived=false&page=$page");
@@ -26,22 +29,31 @@ function fetchTasksFromClickUp()
     // Closing connection
     curl_close($ch);
 
-
     foreach (json_decode($tasksResponse)->tasks as $task) {
         if (isset($task->due_date) && !empty($task->due_date)) {
-            $deadline = $task->due_date / 1000;
+            $deadlineToday = $task->due_date / 1000;
+            $deadlineTomorrow = $deadlineToday - 86400;
             $currentTime = time();
-            if ($deadline < $currentTime && $task->status->status == "afventer data fra kunden") {
+            // echo "deadline: " . $deadlineToday;
+            // echo "<br>";
+            // echo "currenttime: " . $currentTime;
+            // echo "<br>";
+            // echo $task->name;
+            // echo "<br>";
+            // echo "deadline i dag: <br>";
+            // echo $deadlineToday  < $currentTime;
+            // echo "deadline i morgen: <br>";
+            // echo $deadlineTomorrow < $currentTime;
+            // echo "<br>";
+            // echo "<br>";
+
+            if ($deadlineTomorrow < $currentTime && $task->status->status == "afventer data fra kunden") {
+
                 $taskName = $task->name;
                 $custom_fields = $task->custom_fields;
 
                 foreach ($custom_fields as $custom_field) {
-                    /*Kommende cond. statement her med de kommende felt i Click Up */
-                    $recieveNotification = true;
-                    // if($custom_field->name == "Modtag notifikation" && isset($custom_field->value)){
-                    //     $recieveNotification = true;
-                    // }
-                    if ($custom_field->name == "Kunde kontakt" && isset($custom_field->value) && $recieveNotification) {
+                    if ($custom_field->name == "Kunde kontakt" && isset($custom_field->value)) {
                         foreach ($custom_field->value as $value) {
                             $userId = $value->id;
 
@@ -60,30 +72,44 @@ function fetchTasksFromClickUp()
 
                             $user = json_decode($response);
                             $user_custom_fields = $user->custom_fields;
+
+                            // Checks if the checkbox on "Modtag notifikation" is checked
+                            $recieveNotification = false;
                             foreach ($user_custom_fields as $user_custom_field) {
-
-                                if ($user_custom_field->name == "Email" && !empty($user_custom_field->value)) {
-                                    $userEmail = $user_custom_field->value;
-
-                                    $name = $user->name;
-                                    $nameExplode = explode("-", $name, 2);
-                                    $name = $nameExplode[0];
-
-                                    $to = $userEmail;
-                                    $subject = "Overskredet deadline i Mit Holder 100";
-                                    $message = "Hej $name <br><br>
-                                                Du har en opgave i Mit Holder 100 kaldet \"$taskName\" med en overskredet deadline.<br><br>
-                                                Besøg eventuelt appen <a href='https://mit.holder100.dk'>her</a>.<br><br>
-                                                Hilsen Holder 100";
-
-                                    $headers = "MIME-Version: 1.0" . "\r\n";
-                                    $headers .= "Reply-To: service@holder100.dk" . "\r\n";
-                                    $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-                                    $headers .= "Organization: Holder 100 ApS" . "\r\n";
-                                    $headers .= "X-Priority: 3" . "\r\n";
-                                    $headers .= 'From: DIN HOLDER 100 ROBoT <mit@holder100.dk>' . "\r\n";
-
-                                    mail($to, $subject, $message, $headers);
+                                if ($user_custom_field->name == "Modtag notifikation" && isset($user_custom_field->value)) {
+                                    $recieveNotification = true;
+                                }
+                            }
+                            foreach ($user_custom_fields as $user_custom_field) {
+                                if ($recieveNotification) {
+                                    if ($user_custom_field->name == "Email" && !empty($user_custom_field->value)) {
+                                        $userEmail = $user_custom_field->value;
+                                        $username = $user->name;
+                                        $nameExplode = explode("-", $username, 2);
+                                        $username = $nameExplode[0];
+                                        if ($deadlineToday < $currentTime) {
+                                            echo $task->name;
+                                            if (!empty($tasksAndAssociatedUsersWithDeadlineToday)) {
+                                                if ($key = array_search($userEmail, array_column($tasksAndAssociatedUsersWithDeadlineToday, 'userEmail'))) {
+                                                    array_push($tasksAndAssociatedUsersWithDeadlineToday[$key]['taskName'], $taskName);
+                                                } else {
+                                                    array_push($tasksAndAssociatedUsersWithDeadlineToday, ['taskName' => [$taskName], 'username' => $username, 'userEmail' => $userEmail]);
+                                                }
+                                            } else {
+                                                array_push($tasksAndAssociatedUsersWithDeadlineToday, ['taskName' => [$taskName], 'username' => $username, 'userEmail' => $userEmail]);
+                                            }
+                                        } else if ($deadlineTomorrow < $currentTime && $deadlineToday > $currentTime) {
+                                            if (!empty($tasksAndAssociatedUsersWithDeadlineTomorrow)) {
+                                                if ($key = array_search($userEmail, array_column($tasksAndAssociatedUsersWithDeadlineTomorrow, 'userEmail'))) {
+                                                    array_push($tasksAndAssociatedUsersWithDeadlineTomorrow[$key]['taskName'], $taskName);
+                                                } else {
+                                                    array_push($tasksAndAssociatedUsersWithDeadlineTomorrow, ['taskName' => [$taskName], 'username' => $username, 'userEmail' => $userEmail]);
+                                                }
+                                            } else {
+                                                array_push($tasksAndAssociatedUsersWithDeadlineTomorrow, ['taskName' => [$taskName], 'username' => $username, 'userEmail' => $userEmail]);
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -98,3 +124,63 @@ function fetchTasksFromClickUp()
     }
 }
 fetchTasksFromClickUp();
+for ($i = 0; $i < count($tasksAndAssociatedUsersWithDeadlineToday); $i++) {
+    if ($i !== 0) {
+        $taskName = $tasksAndAssociatedUsersWithDeadlineToday[$i]['taskName'];
+        $userEmail = $tasksAndAssociatedUsersWithDeadlineToday[$i]['userEmail'];
+        $username = $tasksAndAssociatedUsersWithDeadlineToday[$i]['username'];
+        $taskString = "";
+        foreach ($taskName as $task) {
+            $taskString .= "<li>$task</li>";
+        }
+
+        $to = $userEmail;
+        $subject = "Overskredet deadline i Mit Holder 100";
+
+        $message = "Hej $username <br><br>
+                    Du har følgende opgaver i Mit Holder 100 med en overskredet deadline:
+                    
+                    <ul>$taskString</ul>
+                    Besøg eventuelt appen <a href='https://mit.holder100.dk'>her</a>.<br><br>
+                    Hilsen Holder 100";
+
+        $headers = "MIME-Version: 1.0" . "\r\n";
+        $headers .= "Reply-To: service@holder100.dk" . "\r\n";
+        $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+        $headers .= "Organization: Holder 100 ApS" . "\r\n";
+        $headers .= "X-Priority: 3" . "\r\n";
+        $headers .= 'From: DIN HOLDER 100 ROBoT <mit@holder100.dk>' . "\r\n";
+
+        mail($to, $subject, $message, $headers);
+    }
+}
+for ($i = 0; $i < count($tasksAndAssociatedUsersWithDeadlineTomorrow); $i++) {
+    if ($i !== 0) {
+        $taskName = $tasksAndAssociatedUsersWithDeadlineTomorrow[$i]['taskName'];
+        $userEmail = $tasksAndAssociatedUsersWithDeadlineTomorrow[$i]['userEmail'];
+        $username = $tasksAndAssociatedUsersWithDeadlineTomorrow[$i]['username'];
+        $taskString = "";
+        foreach ($taskName as $task) {
+            $taskString .= "<li>$task</li>";
+        }
+
+        $to = $userEmail;
+        $subject = "Kommende deadline i Mit Holder 100";
+
+        $message = "Hej $username <br><br>
+                    Du har følgende opgaver i Mit Holder 100 som overskrider deadline i morgen:
+                    
+                    <ul>$taskString</ul>
+                    Besøg eventuelt appen <a href='https://mit.holder100.dk'>her</a>.<br><br>
+                    Hilsen Holder 100";
+
+        $headers = "MIME-Version: 1.0" . "\r\n";
+        $headers .= "Reply-To: service@holder100.dk" . "\r\n";
+        $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+        $headers .= "Organization: Holder 100 ApS" . "\r\n";
+        $headers .= "X-Priority: 3" . "\r\n";
+        $headers .= 'From: DIN HOLDER 100 ROBoT <mit@holder100.dk>' . "\r\n";
+
+        mail($to, $subject, $message, $headers);
+    }
+}
