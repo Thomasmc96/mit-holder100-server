@@ -74,7 +74,7 @@ if (!empty($userEmail)) {
     $headers .= "X-Priority: 3" . "\r\n";
     $headers .= 'From: DIN HOLDER 100 ROBoT <mit@holder100.dk>' . "\r\n";
 
-    mail($to, $subject, $message, $headers);
+    // mail($to, $subject, $message, $headers);
 
     echo json_encode($result = [
         'status' => 200,
