@@ -34,7 +34,8 @@ function fetchTasksFromClickUp()
     $companyArray = explode(" ", $clickUpCompanies);
 
     // URL
-    $ch = curl_init("https://api.clickup.com/api/v2/list/57095312/task?archived=false&page=$page");
+    // $ch = curl_init("https://api.clickup.com/api/v2/list/57095312/task?archived=false&page=$page");
+    $ch = curl_init("https://api.clickup.com/api/v2/team/1380008/task?page=$page&space_ids%5B%5D=8860795");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
     // Headers
