@@ -1,12 +1,16 @@
 <?php
+
+/**
+ * The purpose of this file is to get every comment on a specific task
+ */
 include_once '../cors.php';
 include_once '../config.php';
 
 
 $taskId = "";
 
-if(isset($_GET['taskId']) && !empty($_GET['taskId'])){
-    $taskId = $_GET['taskId'];
+if (isset($_GET['taskId']) && !empty($_GET['taskId'])) {
+  $taskId = $_GET['taskId'];
 }
 
 $curl = curl_init();
@@ -23,7 +27,7 @@ curl_setopt_array($curl, array(
   CURLOPT_HTTPHEADER => array(
     'Content-Type: application/json',
     'Authorization: ' . CLICKUPTOKEN . ''
-),
+  ),
 ));
 
 $response = curl_exec($curl);
