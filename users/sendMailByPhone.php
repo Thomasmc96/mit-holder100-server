@@ -7,7 +7,7 @@ include_once '../cors.php';
 include_once '../getToken.php';
 include_once '../config.php';
 
-$phone = "";
+$phone = "30306406";
 
 if (isset($_POST['phone']) && !empty($_POST['phone'])) {
     $phone = $_POST['phone'];
@@ -65,16 +65,19 @@ if (!empty($userEmail)) {
     $subject = "Pinkode til Mit Holder 100";
     $message = "Hej $userName <br><br>
                     Din pinkode til Mit Holder 100 er: <b>$pincode</b> <br><br>
-                    Du kan skifte din kode inde i Mit Holder 100 <br><br>
-                    Hilsen Holder 100";
+                    Du kan skifte din kode inde i <a href='https://mit.holder100.dk'>Mit Holder 100</a> <br><br><br>
+                    <b>Mvh. Holder 100 ApS</b> <br><br>
+                    <i>Din digitale partner</i> <br><br>
+                    <i>+45 33 60 76 08</i> <br><br>
+                    <i><a href='https://holder100.dk'>www.holder100.dk</a></i> <br><br>
+                    <i><a href='https://outlook.office365.com/owa/calendar/Holder100ApS@holder100.dk/bookings/'>Book en tid</a></i> <br><br>";
     $headers = "MIME-Version: 1.0" . "\r\n";
     $headers .= "Reply-To: service@holder100.dk" . "\r\n";
     $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
     $headers .= "Organization: Holder 100 ApS" . "\r\n";
     $headers .= "X-Priority: 3" . "\r\n";
     $headers .= 'From: DIN HOLDER 100 ROBoT <mit@holder100.dk>' . "\r\n";
-
-    // mail($to, $subject, $message, $headers);
+    mail($to, $subject, $message, $headers);
 
     echo json_encode($result = [
         'status' => 200,

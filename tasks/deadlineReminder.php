@@ -34,18 +34,6 @@ function fetchTasksFromClickUp()
             $deadlineToday = $task->due_date / 1000;
             $deadlineTomorrow = $deadlineToday - 86400;
             $currentTime = time();
-            // echo "deadline: " . $deadlineToday;
-            // echo "<br>";
-            // echo "currenttime: " . $currentTime;
-            // echo "<br>";
-            // echo $task->name;
-            // echo "<br>";
-            // echo "deadline i dag: <br>";
-            // echo $deadlineToday  < $currentTime;
-            // echo "deadline i morgen: <br>";
-            // echo $deadlineTomorrow < $currentTime;
-            // echo "<br>";
-            // echo "<br>";
 
             if ($deadlineTomorrow < $currentTime && $task->status->status == "afventer data fra kunden") {
 
@@ -88,7 +76,6 @@ function fetchTasksFromClickUp()
                                         $nameExplode = explode("-", $username, 2);
                                         $username = $nameExplode[0];
                                         if ($deadlineToday < $currentTime) {
-                                            echo $task->name;
                                             if (!empty($tasksAndAssociatedUsersWithDeadlineToday)) {
                                                 if ($key = array_search($userEmail, array_column($tasksAndAssociatedUsersWithDeadlineToday, 'userEmail'))) {
                                                     array_push($tasksAndAssociatedUsersWithDeadlineToday[$key]['taskName'], $taskName);
@@ -139,11 +126,13 @@ for ($i = 0; $i < count($tasksAndAssociatedUsersWithDeadlineToday); $i++) {
 
         $message = "Hej $username <br><br>
                     Du har følgende opgaver i Mit Holder 100 med en overskredet deadline:
-                    
                     <ul>$taskString</ul>
                     Besøg eventuelt appen <a href='https://mit.holder100.dk'>her</a>.<br><br>
-                    Hilsen Holder 100";
-
+                    <b>Mvh. Holder 100 ApS</b> <br><br>
+                    <i>Din digitale partner</i> <br><br>
+                    <i>+45 33 60 76 08</i> <br><br>
+                    <i><a href='https://holder100.dk'>www.holder100.dk</a></i> <br><br>
+                    <i><a href='https://outlook.office365.com/owa/calendar/Holder100ApS@holder100.dk/bookings/'>Book en tid</a></i> <br><br>";
         $headers = "MIME-Version: 1.0" . "\r\n";
         $headers .= "Reply-To: service@holder100.dk" . "\r\n";
         $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
@@ -169,10 +158,13 @@ for ($i = 0; $i < count($tasksAndAssociatedUsersWithDeadlineTomorrow); $i++) {
 
         $message = "Hej $username <br><br>
                     Du har følgende opgaver i Mit Holder 100 som overskrider deadline i morgen:
-                    
                     <ul>$taskString</ul>
-                    Besøg eventuelt appen <a href='https://mit.holder100.dk'>her</a>.<br><br>
-                    Hilsen Holder 100";
+                    Besøg eventuelt appen <a href='https://mit.holder100.dk'>her</a>.<br><br><br>
+                    <b>Mvh. Holder 100 ApS</b> <br><br>
+                    <i>Din digitale partner</i> <br><br>
+                    <i>+45 33 60 76 08</i> <br><br>
+                    <i><a href='https://holder100.dk'>www.holder100.dk</a></i> <br><br>
+                    <i><a href='https://outlook.office365.com/owa/calendar/Holder100ApS@holder100.dk/bookings/'>Book en tid</a></i> <br><br>";
 
         $headers = "MIME-Version: 1.0" . "\r\n";
         $headers .= "Reply-To: service@holder100.dk" . "\r\n";
