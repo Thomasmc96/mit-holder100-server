@@ -9,17 +9,49 @@
 // folder_demoKunde: 27770443
 // list_marketingsaftaler: 57095312
 
+include_once '../getToken.php';
 include_once '../cors.php';
 include_once '../config.php';
 
+$token = getToken();
 
 $page = 0;
 $filteredTasks = [];
 set_time_limit(0);
+$spaceId = 0;
+
+$curl = curl_init();
+
+curl_setopt_array($curl, array(
+    CURLOPT_URL => HOSTNAME . "/wordpress/wp-json/wp/v2/spaces",
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_ENCODING => '',
+    CURLOPT_MAXREDIRS => 10,
+    CURLOPT_TIMEOUT => 0,
+    CURLOPT_FOLLOWLOCATION => true,
+    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+    CURLOPT_CUSTOMREQUEST => 'GET',
+    CURLOPT_HTTPHEADER => array(
+        "Authorization: Bearer $token",
+        "Content-Type: application/json"
+    ),
+));
+
+$response = curl_exec($curl);
+
+curl_close($curl);
+// echo $spaceResponse;
+$spaceResponse = json_decode($response);
+foreach ($spaceResponse as $space) {
+    // $spaceId = "space_ids%5B%5D=" . $space->acf->space_fields_id;
+    // if (count($spaceResponse) === 1) {
+    $spaceId .= "&space_ids%5B%5D=" . $space->acf->space_fields_id;
+    // }
+}
 
 function fetchTasksFromClickUp()
 {
-    global $page, $filteredTasks;
+    global $page, $filteredTasks, $spaceId;
 
     $clickUpClientId = "";
     $clickUpCompanies = "";
@@ -34,7 +66,7 @@ function fetchTasksFromClickUp()
     $companyArray = explode(" ", $clickUpCompanies);
 
     // URL
-    $ch = curl_init("https://api.clickup.com/api/v2/team/1380008/task?page=$page&space_ids%5B%5D=8860795");
+    $ch = curl_init("https://api.clickup.com/api/v2/team/1380008/task?page=$page$spaceId");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
     // Headers
