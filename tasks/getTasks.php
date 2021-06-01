@@ -18,7 +18,7 @@ $token = getToken();
 $page = 0;
 $filteredTasks = [];
 set_time_limit(0);
-$spaceId = 0;
+$spaceId = "";
 
 $curl = curl_init();
 
@@ -43,10 +43,7 @@ curl_close($curl);
 // echo $spaceResponse;
 $spaceResponse = json_decode($response);
 foreach ($spaceResponse as $space) {
-    // $spaceId = "space_ids%5B%5D=" . $space->acf->space_fields_id;
-    // if (count($spaceResponse) === 1) {
     $spaceId .= "&space_ids%5B%5D=" . $space->acf->space_fields_id;
-    // }
 }
 
 function fetchTasksFromClickUp()
@@ -54,8 +51,8 @@ function fetchTasksFromClickUp()
 
 
     global $page, $filteredTasks, $spaceId;
-    $clickUpClientId = "";
-    $clickUpCompanies = "";
+    $clickUpClientId = "hh3tjc";
+    $clickUpCompanies = "hn9v97 jkahkh ";
 
     if (isset($_GET['clickUpClientId']) && !empty($_GET['clickUpClientId'])) {
         $clickUpClientId = $_GET['clickUpClientId'];
@@ -68,7 +65,8 @@ function fetchTasksFromClickUp()
 
     // URL
     // $ch = curl_init("https://api.clickup.com/api/v2/list/57095312/task?archived=false&page=$page");
-    $ch = curl_init("https://api.clickup.com/api/v2/team/1380008/task?page=$page$spaceId");
+    $ch = curl_init("https://api.clickup.com/api/v2/team/1380008/task?archived=false&page=$page$spaceId");
+
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     // Headers
     curl_setopt($ch, CURLOPT_HTTPHEADER, array(
@@ -119,8 +117,6 @@ function fetchTasksFromClickUp()
         fetchTasksFromClickUp();
     }
 }
-// if ($spaceId !== 0) {
 fetchTasksFromClickUp();
-// }
 
 echo json_encode($filteredTasks);
