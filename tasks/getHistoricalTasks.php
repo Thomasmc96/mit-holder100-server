@@ -18,7 +18,7 @@ $token = getToken();
 $page = 0;
 $filteredTasks = [];
 set_time_limit(0);
-$spaceId = 0;
+$spaceId = "";
 
 $curl = curl_init();
 
@@ -40,13 +40,11 @@ curl_setopt_array($curl, array(
 $response = curl_exec($curl);
 
 curl_close($curl);
-// echo $spaceResponse;
+
 $spaceResponse = json_decode($response);
+
 foreach ($spaceResponse as $space) {
-    // $spaceId = "space_ids%5B%5D=" . $space->acf->space_fields_id;
-    // if (count($spaceResponse) === 1) {
     $spaceId .= "&space_ids%5B%5D=" . $space->acf->space_fields_id;
-    // }
 }
 
 function fetchTasksFromClickUp()
