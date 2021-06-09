@@ -51,8 +51,8 @@ function fetchTasksFromClickUp()
 
 
     global $page, $filteredTasks, $spaceId;
-    $clickUpClientId = "hh3tjc";
-    $clickUpCompanies = "hn9v97 jkahkh ";
+    $clickUpClientId = "";
+    $clickUpCompanies = "";
 
     if (isset($_GET['clickUpClientId']) && !empty($_GET['clickUpClientId'])) {
         $clickUpClientId = $_GET['clickUpClientId'];
